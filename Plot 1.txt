@@ -1,0 +1,21 @@
+# Завантажуємо необхідні бібліотеки
+library(data.table)
+
+# Читання даних
+data <- fread("household_power_consumption.txt", sep=";", na.strings="?", 
+              stringsAsFactors=FALSE)
+
+# Перетворення стовпця 'Date' на формат Date
+data$Date <- as.Date(data$Date, format="%d/%m/%Y")
+
+# Фільтрація для 2007-02-01 та 2007-02-02
+data <- data[data$Date %in% as.Date(c("2007-02-01", "2007-02-02")), ]
+
+# Об'єднуємо 'Date' і 'Time' у новий стовпець 'Datetime'
+data$Datetime <- as.POSIXct(paste(data$Date, data$Time), format="%Y-%m-%d %H:%M:%S")
+
+# Створення графіку
+png("plot1.png", width=480, height=480)
+hist(data$Global_active_power, col="red", main="Global Active Power", 
+     xlab="Global Active Power (kilowatts)", ylab="Frequency")
+dev.off()
